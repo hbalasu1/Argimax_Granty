@@ -29,14 +29,16 @@ import pyupm_stepmotor as mylib
 import pyupm_th02
 from Servo import *
 
+# Instantiate a GP2Y0A on analog pin A0
+myIRProximity = mraa.Aio(0)
+# Create the temperature sensor object using AIO pin 0
+#temp = grove.GroveTemp(0)
+# Instantiate a Grove Moisture sensor on analog pin A1
+myMoisture = upmMoisture.GroveMoisture(1)
 # Create the light sensor object using AIO pin 0
 light = grove.GroveLight(2);
 # Instantiate a UV sensor on analog pin A0
 myUVSensor = upmUV.GUVAS12D(3);
-# Instantiate a Grove Moisture sensor on analog pin A0
-myMoisture = upmMoisture.GroveMoisture(1)
-# Instantiate a GP2Y0A on analog pin A1
-myIRProximity = mraa.Aio(0)
 #defined THo2 i2c address
 th02 = pyupm_th02.TH02(6,0x40)
 # Instantiate a StepMotorX object on pins 2 (dir) and 3 (step)
@@ -50,7 +52,19 @@ waterpump.write(0)
 # Instantiate a Servo motor on port D6
 myServo = Servo("First Servo")
 myServo.attach(6)
+# digital contact switch - SwitchX for GPIO 7 and SwitchY for GPIO 8
+switchX = mraa.Gpio(7)    # while switchX.read() == 1:
+switchX.dir(mraa.DIR_IN)
+switchY = mraa.Gpio(8)
+switchY.dir(mraa.DIR_IN)
+# Instantiate a StepperMotor Enable on GPIO 9
+EnableStepper = mraa.Gpio(9)
+EnableStepper.dir(mraa.DIR_OUT)
+EnableStepper.write(1)
+# Create the button object using GPIO pin 0
+button = grove.GroveButton(0)  # Prefer use interupt   -> ## button.value()
 
+		
 # analog voltage, usually 3.3 or 5.0 for GUVAS12D
 AREF = 5.0;
 SAMPLES_PER_QUERY = 1024;
@@ -92,6 +106,13 @@ def Distancesensor():
 	print "Distance in VOltage (higher mean closer) : " + str(Vproximity)
 	return Vproximity
 
+# Function Display Temperature value
+def Temperature():
+	celsius = temp.value()
+    fahrenheit = celsius * 9.0/5.0 + 32.0;
+    print "%d degrees Celsius, or %d degrees Fahrenheit"% (celsius, fahrenheit)
+	return celsius
+		
 # Function Display soil Moisture value
 def Soilsensor():
 	moisture_val = myMoisture.value()
@@ -130,16 +151,18 @@ while 1:
 	Lightvalue = Lightsensor()
 	Distancevalue = Distancesensor()
 	Soilvalue = Soilsensor()
-	Tempvalue = TempTH02()
+	Tempvalue = TempTH02() #Temperature()
 	
 	# Moving Motor to left and right direction
 	print "Rotating 1 revolution forward and back at 150 rpm."
+	EnableStepper.write(0)
 	stepper.setSpeed(150)
 	stepper.stepForward(200)
 	time.sleep(1)
 	stepper.stepBackward(200)
 	print "End Stepper Motor"
 	time.sleep(2)
+	EnableStepper.write(1)
 	
 	# activate waterpump
 	print "activate water pump"
@@ -154,12 +177,15 @@ while 1:
 	print "Servo z-axis should be up"
 	ServoUp()
 	
-	print UVvalue+" , "+Lightvalue+" , "+Distancevalue+" , "+Soilvalue+" , "+Tempvalue+" ."
+	print "Display Sensor :"+UVvalue+" , "+Lightvalue+" , "+Distancevalue+" , "+Soilvalue+" , "+Tempvalue+" ."
+	print "\n"
+	print "Reading input value ; SwitchX: %d ; SwitchY: %d ; RestartButton: %d ."% (switchX.read(), switchY.read(), button.value()) 
 
 
 del light  # Delete the light sensor object
 del temp   # Delete the temperature sensor object
 del th02   # Delete the tho2 sensor object
+del button # Delete the button object
 
 
 # Information:

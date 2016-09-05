@@ -23,6 +23,8 @@ Most of the code are getting form upm library
 * [guvas12d.py] for grove UV detection sensor control code
 * [stepmotor.py]  for stepper motor control code
 * [th02.py]  for tempterature and humidity sensor control code
+* [servo.py]  for servo motor control library
+* [sweep.py]  for servo motor to move from 0 to 90 degree
 
 # WebSocket Example
 all code are getting from google :) 
@@ -37,3 +39,25 @@ http://websockets.readthedocs.io/en/stable/intro.html
 Another example based on web-ssocket-client (without any .html)
 https://pypi.python.org/pypi/websocket-client/
 
+
+#Pin Connection to Intel Edison :
+	Proximity Sensor (A0) or (Analog 9)
+	Grove - Temperature (A0)
+	Grove - Moisture Sensor (A1)              
+	Grove - Light Sensor (A2)                     
+	Grove - UV Sensor (A3)                        
+	Grove – Temperature Sensor TH02 (i2c)
+	Grove - Servor (D6)
+
+	Water pump with Relay and V.resistor (GPIO 6)
+	Stepper Motor X  (DIR,2   STP,3)
+	Stepper Motor Y (DIR,4    STP,5)
+	LED  (GPIO ?)
+	Camera (USB)
+ 
+	Touch switch X (GPIO 7)
+	Touch switch Y (GPIO 8)
+	StepperMotor Enable (GPIO 9)
+	Restart button   (GPIO  1)  -> to restart the software and motor position
+	
+	Emergency Button (to cut off 12v Power)

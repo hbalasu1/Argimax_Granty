@@ -33,7 +33,7 @@ light = grove.GroveLight(2);
 myUVSensor = upmUV.GUVAS12D(3);
 # Create the temperature sensor object using AIO pin 0
 #temp = grove.GroveTemp(0)
-# Instantiate a Grove Moisture sensor on analog pin A0
+# Instantiate a Grove Moisture sensor on analog pin A1
 myMoisture = upmMoisture.GroveMoisture(1)
 # Instantiate a GP2Y0A on analog pin A1
 myIRProximity = upmGp2y0a.GP2Y0A(0)
