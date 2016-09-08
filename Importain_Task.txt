@@ -13,4 +13,8 @@ Software:
 Hardware: 
 1. Circuit connection
 
-2. Machenical Functionality 
+2. Machenical Functionality
+
+Some Useful information on websocket example;
+1. https://www.hackster.io/AgustinP/logging-sensor-data-using-intel-edison-amp-python-d6cccc
+2. http://iot-projects.com/index.php?id=raspberry-pi-temperature-visualization-using-websocket
