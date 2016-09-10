@@ -18,3 +18,33 @@ Hardware:
 Some Useful information on websocket example;
 1. https://www.hackster.io/AgustinP/logging-sensor-data-using-intel-edison-amp-python-d6cccc
 2. http://iot-projects.com/index.php?id=raspberry-pi-temperature-visualization-using-websocket
+
+
+Output data;
+
+AREF:  5.0, Voltage value (higher means more UV): 0.0
+Light Sensor raw value is 548, which is roughly 15 lux
+Distance in VOltage (higher mean closer) : 2.2705078125
+Moisture value: 0, Dry
+21 degrees Celsius, or 69 degrees Fahrenheit
+Rotating 1 revolution forward and back at 150 rpm.
+End Stepper Motor
+activate water pump
+Servo z-axis should be down
+Servo z-axis should be up
+Display Sensor :AREF:  5.0, Voltage value (higher means more UV): 0.0 , 15 , 2.2705078125 , 0 , 21 .
+Reading input value ; SwitchX: 1 ; SwitchY: 1 ; RestartButton: 0 .
+
+AREF:  5.0, Voltage value (higher means more UV): 0.0
+Light Sensor raw value is 557, which is roughly 16 lux
+Distance in VOltage (higher mean closer) : 2.275390625
+Moisture value: 0, Dry
+21 degrees Celsius, or 69 degrees Fahrenheit
+Rotating 1 revolution forward and back at 150 rpm.
+End Stepper Motor
+activate water pump
+Servo z-axis should be down
+Servo z-axis should be up
+Display Sensor :AREF:  5.0, Voltage value (higher means more UV): 0.0 , 16 , 2.275390625 , 0 , 21 .
+Reading input value ; SwitchX: 1 ; SwitchY: 1 ; RestartButton: 0 .
+
