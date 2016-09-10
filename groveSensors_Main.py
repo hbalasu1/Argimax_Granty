@@ -32,7 +32,7 @@ from Servo import *
 # Instantiate a GP2Y0A on analog pin A0
 myIRProximity = mraa.Aio(0)
 # Create the temperature sensor object using AIO pin 0
-#temp = grove.GroveTemp(0)
+temp = grove.GroveTemp(0)
 # Instantiate a Grove Moisture sensor on analog pin A1
 myMoisture = upmMoisture.GroveMoisture(1)
 # Create the light sensor object using AIO pin 0
@@ -102,15 +102,15 @@ def Lightsensor():
 
 # Function Display Distance sensor value
 def Distancesensor():
-	Vproximity = float(myIRProximity.read())*AREF/SAMPLES_PER_QUERY)
+	Vproximity = float(myIRProximity.read())*AREF/SAMPLES_PER_QUERY
 	print "Distance in VOltage (higher mean closer) : " + str(Vproximity)
 	return Vproximity
 
 # Function Display Temperature value
 def Temperature():
 	celsius = temp.value()
-    fahrenheit = celsius * 9.0/5.0 + 32.0;
-    print "%d degrees Celsius, or %d degrees Fahrenheit"% (celsius, fahrenheit)
+        fahrenheit = celsius * 9.0/5.0 + 32.0
+        print "%d degrees Celsius, or %d degrees Fahrenheit"% (celsius, fahrenheit)
 	return celsius
 		
 # Function Display soil Moisture value
@@ -151,15 +151,21 @@ while 1:
 	Lightvalue = Lightsensor()
 	Distancevalue = Distancesensor()
 	Soilvalue = Soilsensor()
-	Tempvalue = TempTH02() #Temperature()
+	#Tempvalue = TempTH02() 
+        Tempvalue = Temperature()
 	
 	# Moving Motor to left and right direction
 	print "Rotating 1 revolution forward and back at 150 rpm."
 	EnableStepper.write(0)
-	stepper.setSpeed(150)
-	stepper.stepForward(200)
+	stepperX.setSpeed(150)
+        stepperY.setSpeed(150)
+	stepperX.stepForward(200)
 	time.sleep(1)
-	stepper.stepBackward(200)
+        stepperY.stepForward(200)
+        time.sleep(1)
+	stepperX.stepBackward(200)
+        time.sleep(1)
+        stepperY.stepBackward(200)
 	print "End Stepper Motor"
 	time.sleep(2)
 	EnableStepper.write(1)
@@ -177,7 +183,7 @@ while 1:
 	print "Servo z-axis should be up"
 	ServoUp()
 	
-	print "Display Sensor :"+UVvalue+" , "+Lightvalue+" , "+Distancevalue+" , "+Soilvalue+" , "+Tempvalue+" ."
+	print "Display Sensor :"+str(UVvalue)+" , "+str(Lightvalue)+" , "+str(Distancevalue)+" , "+str(Soilvalue)+" , "+str(Tempvalue)+" ."
 	print "\n"
 	print "Reading input value ; SwitchX: %d ; SwitchY: %d ; RestartButton: %d ."% (switchX.read(), switchY.read(), button.value()) 
 
