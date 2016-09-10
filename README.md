@@ -41,12 +41,12 @@ https://pypi.python.org/pypi/websocket-client/
 
 
 #Pin Connection to Intel Edison :
-	Proximity Sensor (A0) or (Analog 9)
+	Proximity Sensor (Analog 5)
 	Grove - Temperature (A0)
 	Grove - Moisture Sensor (A1)              
 	Grove - Light Sensor (A2)                     
 	Grove - UV Sensor (A3)                        
-	Grove – Temperature Sensor TH02 (i2c)
+	Grove – Temperature Sensor TH02 (i2c) [not using it]
 	Grove - Servor (D6)
 
 	Water pump with Relay and V.resistor (GPIO 6)
