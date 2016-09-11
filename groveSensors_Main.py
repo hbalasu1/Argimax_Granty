@@ -26,11 +26,11 @@ import pyupm_grove as grove
 import pyupm_guvas12d as upmUV
 import pyupm_grovemoisture as upmMoisture
 import pyupm_stepmotor as mylib
-import pyupm_th02
+#import pyupm_th02
 from Servo import *
 
-# Instantiate a GP2Y0A on analog pin A0
-myIRProximity = mraa.Aio(0)
+# Instantiate a GP2Y0A on Analog pin 5
+myIRProximity = mraa.Aio(5)
 # Create the temperature sensor object using AIO pin 0
 temp = grove.GroveTemp(0)
 # Instantiate a Grove Moisture sensor on analog pin A1
@@ -103,7 +103,7 @@ def Lightsensor():
 # Function Display Distance sensor value
 def Distancesensor():
 	Vproximity = float(myIRProximity.read())*AREF/SAMPLES_PER_QUERY
-	print "Distance in VOltage (higher mean closer) : " + str(Vproximity)
+	print "Distance in Voltage (higher mean closer) : " + str(Vproximity)
 	return Vproximity
 
 # Function Display Temperature value
