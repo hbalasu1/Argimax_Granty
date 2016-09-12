@@ -26,16 +26,17 @@ import pyupm_grove as grove
 import pyupm_guvas12d as upmUV
 import pyupm_grovemoisture as upmMoisture
 import pyupm_stepmotor as mylib
+import pyupm_servo as servo
 #import pyupm_th02
-from Servo import *
+#from Servo import *
 
 # Instantiate a GP2Y0A on Analog pin 5
 myIRProximity = mraa.Aio(5)
 # Create the temperature sensor object using AIO pin 0
 temp = grove.GroveTemp(0)
-# Instantiate a Grove Moisture sensor on analog pin A1
+# Instantiate a Grove Moisture sensor on AIO pin 1
 myMoisture = upmMoisture.GroveMoisture(1)
-# Create the light sensor object using AIO pin 0
+# Create the light sensor object using AIO pin 2
 light = grove.GroveLight(2);
 # Instantiate a UV sensor on analog pin A0
 myUVSensor = upmUV.GUVAS12D(3);
@@ -50,8 +51,10 @@ waterpump = mraa.Gpio(6)
 waterpump.dir(mraa.DIR_OUT)
 waterpump.write(0)
 # Instantiate a Servo motor on port D6
-myServo = Servo("First Servo")
-myServo.attach(6)
+#myServo = Servo("First Servo")
+#myServo.attach(6)
+# Create the servo object using D6
+gServo = servo.ES08A(6)
 # digital contact switch - SwitchX for GPIO 7 and SwitchY for GPIO 8
 switchX = mraa.Gpio(7)    # while switchX.read() == 1:
 switchX.dir(mraa.DIR_IN)
@@ -133,15 +136,15 @@ def TempTH02():
 
 def ServoDown():
 	# From 0 to 180 degrees
-	for angle in range(0,180):
-		myServo.write(angle)
-		time.sleep(0.005)
+	gServo.setAngle(0)
+	time.sleep(1)
+	gServo.setAngle(180)
 	return
 	
 def ServoUp():
-	for angle in range(180,-1,-1):
-		myServo.write(angle)
-		time.sleep(0.005)
+	gServo.setAngle(180)
+	time.sleep(1)
+	gServo.setAngle(0)
 	return
 	
 # Read the input and print both the raw value and a rough lux value,
@@ -192,6 +195,7 @@ del light  # Delete the light sensor object
 del temp   # Delete the temperature sensor object
 del th02   # Delete the tho2 sensor object
 del button # Delete the button object
+del gServo # Delete the servo motor object
 
 
 # Information:
