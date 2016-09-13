@@ -35,16 +35,15 @@ Servo z-axis should be up
 Display Sensor :AREF:  5.0, Voltage value (higher means more UV): 0.0 , 15 , 2.2705078125 , 0 , 21 .
 Reading input value ; SwitchX: 1 ; SwitchY: 1 ; RestartButton: 0 .
 
-AREF:  5.0, Voltage value (higher means more UV): 0.0
-Light Sensor raw value is 557, which is roughly 16 lux
-Distance in VOltage (higher mean closer) : 2.275390625
-Moisture value: 0, Dry
-21 degrees Celsius, or 69 degrees Fahrenheit
-Rotating 1 revolution forward and back at 150 rpm.
-End Stepper Motor
-activate water pump
-Servo z-axis should be down
-Servo z-axis should be up
-Display Sensor :AREF:  5.0, Voltage value (higher means more UV): 0.0 , 16 , 2.275390625 , 0 , 21 .
-Reading input value ; SwitchX: 1 ; SwitchY: 1 ; RestartButton: 0 .
+Test all the 5 SENSORS :
+1. UV Sensor :          0
+2. Light Sensor :       16
+3. Distance Sensor :    0.297852
+4. Moisture Sensor :    0
+5. Temperature Sensor :         21
+6. Analog A5 value :     62
+7. Analog A0 value  :    465
+ Somes of the sensor(s) not working
+ 
+ # Analog A3 (SOIL) AND A1 (UV)
 
