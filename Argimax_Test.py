@@ -64,7 +64,6 @@ def SIGINTHandler(signum, frame):
 # This function lets you run code on exit, including functions from myUVSensor
 def exitHandler():
 	print "Exiting"
-	del [light, temp, button, gServo]
 	sys.exit(0)
 
 # Register exit handlers
@@ -97,7 +96,7 @@ while looping:
 	print "going to initial stages"
 	EnableStepper.write(0)
 	stepperX.setSpeed(150)
-	x_for, x_bac, y_for, y_bac = 1
+	x_for = x_bac = y_for = y_bac = 1
 	while switchX.read() == 1:
 		stepperX.stepForward(x_for)
 		x_for+=1
