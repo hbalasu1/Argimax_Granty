@@ -31,19 +31,19 @@ import pyupm_servo as servo
 
 # IO Def
 myIRProximity = mraa.Aio(5)  				#GP2Y0A on Analog pin 5
-temp = grove.GroveTemp(0) 					#grove temperature on A0 
-myMoisture = upmMoisture.GroveMoisture(1) 	#Moisture sensor on A1
+temp = grove.GroveTemp(0) 				#grove temperature on A0 
+myMoisture = upmMoisture.GroveMoisture(1) 		#Moisture sensor on A1
 light = grove.GroveLight(2) 				#Light sensor on A2
 myUVSensor = upmUV.GUVAS12D(3) 				#UV sensor on A3
-stepperX = mylib.StepMotor(2, 3) 			#StepMotorX object on pins 2 (dir) and 3 (step)
-stepperY = mylib.StepMotor(4, 5)			#StepMotorY object on pins 4 (dir) and 5 (step)
-waterpump = mraa.Gpio(6) 					#Water pump's Relay on GPIO 6 
+stepperY = mylib.StepMotor(2, 3) 			#StepMotorX object on pins 2 (dir) and 3 (step)
+stepperX = mylib.StepMotor(4, 5)			#StepMotorY object on pins 4 (dir) and 5 (step)
+waterpump = mraa.Gpio(6) 				#Water pump's Relay on GPIO 6 
 waterpump.dir(mraa.DIR_OUT)
 waterpump.write(0)
-gServo = servo.ES08A(6)                		#Servo object using D6
-switchX = mraa.Gpio(7)    					#SwitchX for GPIO 7
+gServo = servo.ES08A(6)                			#Servo object using D6
+switchX = mraa.Gpio(7)    				#SwitchX for GPIO 7
 switchX.dir(mraa.DIR_IN)
-switchY = mraa.Gpio(8)						#SwitchY for GPIO 8
+switchY = mraa.Gpio(8)					#SwitchY for GPIO 8
 switchY.dir(mraa.DIR_IN)
 EnableStepper = mraa.Gpio(9)				#StepperMotor Enable on GPIO 9
 EnableStepper.dir(mraa.DIR_OUT)
@@ -54,7 +54,7 @@ button = grove.GroveButton(0)  				#Digital Button on D0   -> ## button.value()
 # Variable Def
 AREF = 5.0
 SAMPLES_PER_QUERY = 1024
-looping = TRUE
+flag = 1
 
 ## Exit handlers ##
 # This function stops python from printing a stacktrace when you hit control-C
@@ -71,7 +71,7 @@ atexit.register(exitHandler)
 signal.signal(signal.SIGINT, SIGINTHandler)
 	
 # Main Function start here
-while looping:
+while (flag):
 	# Test all 5 Sensors
 	UVvalue = myUVSensor.value(AREF, SAMPLES_PER_QUERY) #Voltage value (higher means more UV)
 	Lightvalue = light.value()  # in lux
@@ -80,38 +80,44 @@ while looping:
     	Tempvalue = temp.value()  # Celsius
 	
 	print "Test all the 5 SENSORS :"
-	print "1. UV Sensor : 			%d" % UVvalue
-	print "2. Light Sensor : 		%d" % Lightvalue
-	print "3. Distance Sensor : 	%d" % Distancevalue
-	print "4. Moisture Sensor : 	%d" % Soilvalue
-	print "5. Temperature Sensor : 	%d" % Tempvalue
+	print "1. UV Sensor : 		%d V" % UVvalue
+	print "2. Light Sensor : 	%d Lux" % Lightvalue
+	print "3. Distance Sensor : 	%f V" % Distancevalue
+	print "4. Moisture Sensor : 	%d " % Soilvalue
+	print "5. Temperature Sensor : 	%d Celsius" % Tempvalue
 	
 	sensors = [Lightvalue, Distancevalue, Soilvalue, Tempvalue]
 	sences = all(value!=0 for value in sensors)
 	if (sences): print "All sensors work greate"
 	else: print " Somes of the sensor(s) not working "
 	
+	# Test input value for switch(s) and restart button
+	print "Test Input Value, Switch(s) and button"
+	print "1. Switch X : %d " % switchX.read()
+	print "2. Switch Y : %d " % switchY.read()
+	print "3. Button R : %d " % button.value()
+
 	# Test Stepper Motor (going to initial stages)
 	print "Testing Stepper Motor ... "
-	print "going to initial stages"
+	print "going to initial stages until switch = 0"
 	EnableStepper.write(0)
 	stepperX.setSpeed(150)
-	x_for = x_bac = y_for = y_bac = 1
+	#x_for = x_bac = y_for = y_bac = 1
 	while switchX.read() == 1:
-		stepperX.stepForward(x_for)
-		x_for+=1
+		stepperX.BackForward(100)
+		#x_for*=5
 		time.sleep(0.3)
         
 	stepperY.setSpeed(150)
-	while switchX.read() == 1:
-		stepperY.stepForward(y_for)
-		y_for+=1
+	while switchY.read() == 1:
+		stepperY.stepBackward(100)
+		#y_for*=5
 		time.sleep(0.3)
 		
 	time.sleep(1)
-	stepperX.stepBackward(200) 
+	stepperX.stepForward(100) 
     	time.sleep(1)
-    	stepperY.stepBackward(200)
+    	stepperY.stepForward(100)
 	print "End Stepper Motor Test"
 	EnableStepper.write(1)
 	
@@ -137,9 +143,7 @@ while looping:
 	gServo.setAngle(0)
 	time.sleep(1)
 	
-	# Test input value for switch(s) and restart button
-	print "Reading input value ; SwitchX: %d ; SwitchY: %d ; RestartButton: %d ."% (switchX.read(), switchY.read(), button.value()) 
-	looping = FALSE
+	flag = 0
 
 del [light, temp, button, gServo]  
 
