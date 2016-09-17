@@ -35,19 +35,20 @@ temp = grove.GroveTemp(0) 				#grove temperature on A0
 myMoisture = upmMoisture.GroveMoisture(1) 		#Moisture sensor on A1
 light = grove.GroveLight(2) 				#Light sensor on A2
 myUVSensor = upmUV.GUVAS12D(3) 				#UV sensor on A3
-stepperY = mylib.StepMotor(2, 3) 			#StepMotorX object on pins 2 (dir) and 3 (step)
-stepperX = mylib.StepMotor(4, 5)			#StepMotorY object on pins 4 (dir) and 5 (step)
+stepperX = mylib.StepMotor(2, 3) 			#StepMotorY object on pins 2 (dir) and 3 (step)
+stepperY = mylib.StepMotor(4, 5)			#StepMotorX object on pins 4 (dir) and 5 (step)
 waterpump = mraa.Gpio(10) 				#Water pump's Relay on GPIO 10
 waterpump.dir(mraa.DIR_OUT)
 waterpump.write(0)
 gServo = servo.ES08A(6)                			#Servo object using D6
-switchX = mraa.Gpio(7)    				#SwitchX for GPIO 7
-switchX.dir(mraa.DIR_IN)
-switchY = mraa.Gpio(8)					#SwitchY for GPIO 8
+gServo.setAngle(50)
+switchY = mraa.Gpio(7)    				#SwitchY for GPIO 7
 switchY.dir(mraa.DIR_IN)
+switchX = mraa.Gpio(8)					#SwitchX for GPIO 8
+switchX.dir(mraa.DIR_IN)
 EnableStepper = mraa.Gpio(9)				#StepperMotor Enable on GPIO 9
 EnableStepper.dir(mraa.DIR_OUT)
-EnableStepper.write(1)
+EnableStepper.write(0)
 button = grove.GroveButton(0)  				#Digital Button on D0   -> ## button.value()
 
 		
@@ -64,7 +65,7 @@ def SIGINTHandler(signum, frame):
 # This function lets you run code on exit, including functions from myUVSensor
 def exitHandler():
 	waterpump.write(0)
-	EnableStepper.write(1)
+	EnableStepper.write(0)
 	print "Exiting"
 	sys.exit(0)
 
@@ -74,7 +75,7 @@ signal.signal(signal.SIGINT, SIGINTHandler)
 	
 # Main Function start here
 while (flag):
-	# Test all 5 Sensors
+        # Test all 5 Sensors
 	UVvalue = myUVSensor.value(AREF, SAMPLES_PER_QUERY) #Voltage value (higher means more UV)
 	Lightvalue = light.value()  # in lux
 	Distancevalue = float(myIRProximity.read())*AREF/SAMPLES_PER_QUERY  #Distance in Voltage (higher mean closer)
@@ -86,7 +87,7 @@ while (flag):
 	print "2. Light Sensor : 	%d Lux" % Lightvalue
 	print "3. Distance Sensor : 	%f V" % Distancevalue
 	print "4. Moisture Sensor : 	%d " % Soilvalue
-	print "5. Temperature Sensor : 	%d Celsius" % Tempvalue
+	print "5. Temperature Sensor :  %d Celsius" % Tempvalue
 	
 	sensors = [Lightvalue, Distancevalue, Soilvalue, Tempvalue]
 	sences = all(value!=0 for value in sensors)
@@ -98,53 +99,48 @@ while (flag):
 	print "1. Switch X : %d " % switchX.read()
 	print "2. Switch Y : %d " % switchY.read()
 	print "3. Button R : %d " % button.value()
-
+        
 	# Test Stepper Motor (going to initial stages)
 	print "Testing Stepper Motor ... "
 	print "going to initial stages until switch 0"
 	EnableStepper.write(0)
-	stepperX.setSpeed(150)
-	x_for = x_bac = y_for = y_bac = 1
+	stepperX.setSpeed(300)
+        print "Moving Stepper Motor X"
+        '''
 	while (switchX.read()):
-		stepperX.stepForward(x_for)
-		x_for+=1
-		time.sleep(0.3)
-        
-	stepperY.setSpeed(150)
-	while (switchY.read()):
-		stepperY.stepForward(y_for)
-		y_for+=1
-		time.sleep(0.3)
+	        stepperX.stepForward(100)
+	        time.sleep(0.3)
+        '''
+        print "Moving Stepper Motor Y"
+	stepperY.setSpeed(300)
+        while (switchY.read()):
+	        stepperY.stepBackward(100)
+	        time.sleep(0.3)
 		
 	time.sleep(1)
 	stepperX.stepBackward(200) 
     	time.sleep(1)
-    	stepperY.stepBackward(200)
+    	stepperY.stepForward(500)
 	print "End Stepper Motor Test"
 	EnableStepper.write(1)
 	
 	# Test Water Pump relay 
 	print "Activate water pump's Relay"
 	waterpump.write(1)
-	time.sleep(3)
+	time.sleep(5)
 	waterpump.write(0)
+        time.sleep(2)
 	print "End Water pump's relay Test, Should hear the sound"
 	
 	# Test Servo Z-axis position
 	print "Test Servo motor function "
-	gServo.setAngle(0)
-	time.sleep(1)
-	print "Servo z-axis should be down"
-	gServo.setAngle(90)
-	time.sleep(1)
-	gServo.setAngle(180)
-	time.sleep(1)
+        print "Servo z-axis should be down"
+	gServo.setAngle(100)
+	time.sleep(3.5)
 	print "Servo z-axis should be up"
-	gServo.setAngle(90)
+	gServo.setAngle(50)
 	time.sleep(1)
-	gServo.setAngle(0)
-	time.sleep(1)
-	
+        print "Finish all Test :) "
 	flag = 0
 
 del [light, temp, button, gServo]  
