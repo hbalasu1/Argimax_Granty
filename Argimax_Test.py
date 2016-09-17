@@ -37,7 +37,7 @@ light = grove.GroveLight(2) 				#Light sensor on A2
 myUVSensor = upmUV.GUVAS12D(3) 				#UV sensor on A3
 stepperY = mylib.StepMotor(2, 3) 			#StepMotorX object on pins 2 (dir) and 3 (step)
 stepperX = mylib.StepMotor(4, 5)			#StepMotorY object on pins 4 (dir) and 5 (step)
-waterpump = mraa.Gpio(6) 				#Water pump's Relay on GPIO 6 
+waterpump = mraa.Gpio(10) 				#Water pump's Relay on GPIO 10
 waterpump.dir(mraa.DIR_OUT)
 waterpump.write(0)
 gServo = servo.ES08A(6)                			#Servo object using D6
@@ -63,6 +63,8 @@ def SIGINTHandler(signum, frame):
 
 # This function lets you run code on exit, including functions from myUVSensor
 def exitHandler():
+	waterpump.write(0)
+	EnableStepper.write(1)
 	print "Exiting"
 	sys.exit(0)
 
@@ -99,25 +101,25 @@ while (flag):
 
 	# Test Stepper Motor (going to initial stages)
 	print "Testing Stepper Motor ... "
-	print "going to initial stages until switch = 0"
+	print "going to initial stages until switch 0"
 	EnableStepper.write(0)
 	stepperX.setSpeed(150)
-	#x_for = x_bac = y_for = y_bac = 1
-	while switchX.read() == 1:
-		stepperX.BackForward(100)
-		#x_for*=5
+	x_for = x_bac = y_for = y_bac = 1
+	while (switchX.read()):
+		stepperX.stepForward(x_for)
+		x_for+=1
 		time.sleep(0.3)
         
 	stepperY.setSpeed(150)
-	while switchY.read() == 1:
-		stepperY.stepBackward(100)
-		#y_for*=5
+	while (switchY.read()):
+		stepperY.stepForward(y_for)
+		y_for+=1
 		time.sleep(0.3)
 		
 	time.sleep(1)
-	stepperX.stepForward(100) 
+	stepperX.stepBackward(200) 
     	time.sleep(1)
-    	stepperY.stepForward(100)
+    	stepperY.stepBackward(200)
 	print "End Stepper Motor Test"
 	EnableStepper.write(1)
 	
