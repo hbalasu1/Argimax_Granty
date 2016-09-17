@@ -1,49 +1,42 @@
 Software:
-1. Test on Servo control for both python and java script
-	using example codes es08a.py and es08a.js
-	implement it on Main codes
-	
-2. study java script
-	generate main code for java script
-	
+1. Write out Main Argorithms for robot movement	
 3. Test on camera module code. 
-
-4. getting started on HTML5
+4. getting started on HTML5 and web control
 
 Hardware: 
-1. Circuit connection
-
-2. Machenical Functionality
+1. Stepper Motor X Driver replace
+2. Plaining 
+3. watering
 
 Some Useful information on websocket example;
 1. https://www.hackster.io/AgustinP/logging-sensor-data-using-intel-edison-amp-python-d6cccc
 2. http://iot-projects.com/index.php?id=raspberry-pi-temperature-visualization-using-websocket
 
 
-Output data;
+Output data (17 sept 2016) :
 
-AREF:  5.0, Voltage value (higher means more UV): 0.0
-Light Sensor raw value is 548, which is roughly 15 lux
-Distance in VOltage (higher mean closer) : 2.2705078125
-Moisture value: 0, Dry
-21 degrees Celsius, or 69 degrees Fahrenheit
-Rotating 1 revolution forward and back at 150 rpm.
-End Stepper Motor
-activate water pump
+root@edison:~/Argimax_Granty# python Argimax_Test.py 
+Test all the 5 SENSORS :
+1. UV Sensor : 		0 V
+2. Light Sensor : 	17 Lux
+3. Distance Sensor : 	0.322266 V
+4. Moisture Sensor : 	0 
+5. Temperature Sensor :  22 Celsius
+ Somes of the sensor(s) not working 
+Test Input Value, Switch(s) and button
+1. Switch X : 1 
+2. Switch Y : 1 
+3. Button R : 0 
+Testing Stepper Motor ... 
+going to initial stages until switch 0
+Moving Stepper Motor X
+Moving Stepper Motor Y
+End Stepper Motor Test
+Activate water pump's Relay
+End Water pump's relay Test, Should hear the sound
+Test Servo motor function 
 Servo z-axis should be down
 Servo z-axis should be up
-Display Sensor :AREF:  5.0, Voltage value (higher means more UV): 0.0 , 15 , 2.2705078125 , 0 , 21 .
-Reading input value ; SwitchX: 1 ; SwitchY: 1 ; RestartButton: 0 .
-
-Test all the 5 SENSORS :
-1. UV Sensor :          0
-2. Light Sensor :       16
-3. Distance Sensor :    0.297852
-4. Moisture Sensor :    0
-5. Temperature Sensor :         21
-6. Analog A5 value :     62
-7. Analog A0 value  :    465
- Somes of the sensor(s) not working
- 
- # Analog A3 (SOIL) AND A1 (UV)
+Finish all Test :) 
+Exiting
 
