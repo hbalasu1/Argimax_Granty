@@ -46,12 +46,11 @@ https://pypi.python.org/pypi/websocket-client/
 	Grove - Moisture Sensor (A1)              
 	Grove - Light Sensor (A2)                     
 	Grove - UV Sensor (A3)                        
-	Grove – Temperature Sensor TH02 (i2c) [not using it]
 	Grove - Servor (D6)
 
-	Water pump with Relay and V.resistor (GPIO 6)
-	Stepper Motor X  (DIR,2   STP,3)
-	Stepper Motor Y (DIR,4    STP,5)
+	Water pump with Relay and V.resistor (GPIO 10)
+	Stepper Motor Y  (DIR,2   STP,3)
+	Stepper Motor X (DIR,4    STP,5)
 	LED  (GPIO ?)
 	Camera (USB)
  
