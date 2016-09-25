@@ -22,7 +22,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import time, sys, signal, atexit, mraa, thread, threading
+import time, sys, signal, atexit, mraa, thread, threading, os
 import pyupm_grove as grove
 import pyupm_guvas12d as upmUV
 import pyupm_grovemoisture as upmMoisture
@@ -120,25 +120,47 @@ def MoveToPot(pot):
 	print "Moving to Pot %d " %(pot)
 	posX = 200; posY = 200
 	EnableStepper.write(0)
-	return {
-        1: stepperX.stepBackward(posX); stepperY.stepForward(posY),
-        2: stepperX.stepBackward(posX+100); stepperY.stepForward(posY+100),
-		3: stepperX.stepBackward(posX+200); stepperY.stepForward(posY+200),
-		4: stepperX.stepBackward(posX+300); stepperY.stepForward(posY+300),
-		5: stepperX.stepBackward(posX+400); stepperY.stepForward(posY+400),
-		6: stepperX.stepBackward(posX+500); stepperY.stepForward(posY+500),
-		7: stepperX.stepBackward(posX+600); stepperY.stepForward(posY+600),
-		8: stepperX.stepBackward(posX+700); stepperY.stepForward(posY+700),
-		9: stepperX.stepBackward(posX+800); stepperY.stepForward(posY+800),
-		}[pot]
+	if (pot == 1): stepperX.stepBackward(posX); stepperY.stepForward(posY); 
+	elif (pot == 2): stepperX.stepBackward(posX+100); stepperY.stepForward(posY+100); 
+	elif (pot == 3): stepperX.stepBackward(posX+200); stepperY.stepForward(posY+200); 
+	elif (pot == 4): stepperX.stepBackward(posX+300); stepperY.stepForward(posY+300); 
+	elif (pot == 5): stepperX.stepBackward(posX+400); stepperY.stepForward(posY+400); 
+	elif (pot == 6): stepperX.stepBackward(posX+500); stepperY.stepForward(posY+500); 
+	elif (pot == 7): stepperX.stepBackward(posX+600); stepperY.stepForward(posY+600); 
+	elif (pot == 8): stepperX.stepBackward(posX+700); stepperY.stepForward(posY+700); 
+	elif (pot == 9): stepperX.stepBackward(posX+800); stepperY.stepForward(posY+800); 
+	else: print "Invalid operation for Pot Position"; 
 	EnableStepper.write(1)
 	time.sleep(1)
+	return 
+	
+def PlanMoist(pot):
+	print "Check Soil Moisture "
+	if (Distancevalue > 0.5): gServo.setAngle(100); time.sleep(1);
+		if (Soilvalue > 300): 
+		else: print "Soil is Moisture"
+			
+	gServo.setAngle(50)
+	else: print "No Pot detected"
+	
+	time.sleep(1)
+	return 
+	
+def GetSensorsValue():
+	while (1):
+		print "Test all the 5 SENSORS :"
+		print "1. UV Sensor : 		%d V" % UVvalue
+		print "2. Light Sensor : 	%d Lux" % Lightvalue
+		print "3. Distance Sensor : 	%f V" % Distancevalue
+		print "4. Moisture Sensor : 	%d " % Soilvalue
+		print "5. Temperature Sensor :  %d Celsius" % Tempvalue
 	return 
 	
 if __name__ == '__main__':
 while (flag):
 	Thread(target = Restart_Program).start() #Go into Initial Stages
 	# Add calling camera modules
+	Thread(target = GetSensorsValue).start() #Go into Initial Stages
 	initial()
 	for x in range(1,10):
 		MoveToPot(x)
