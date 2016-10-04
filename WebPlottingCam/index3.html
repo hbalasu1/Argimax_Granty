@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="initial-scale=1"/>
+  <title>IoT Temperature Gauge</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/jquery-1.7.1.min.js"></script>
+  <script src="/js/highcharts.js"></script>
+  <style type="text/css">
+    .container {
+      margin-top: 10%;
+      text-align: center;
+    }
+
+    }
+  </style>
+</head>
+<body>
+
+  <div id="chart" style="width:100%; height:400px;"></div>
+  <script type="text/javascript">
+    var socket = io.connect();
+    var chart;
+    chart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'chart', 
+            defaultSeriesType: 'spline',
+            events: {
+                load: function() {
+                    // Each time you receive a value from the socket, I put it on the graph
+                    socket.on('temperatureUpdate', function (time, data) {
+                        var series = chart.series[0];
+                        series.addPoint([time, data]);
+                    });
+                }
+            }
+        },
+        rangeSelector : {
+            selected : 100
+        },
+        title: {
+            text: 'Home Temperature (Ambient)'
+        },
+        xAxis: {
+            type: 'datetime',
+            tickPixelInterval: 150,
+            maxZoom: 20 * 1000
+        },
+        yAxis: {
+            minPadding: 0.2,
+            maxPadding: 0.2,
+            title: {
+                text: 'Celcius',
+                margin: 80
+            }
+        },
+        series: [{
+            name: 'Temperature',
+            data: []
+        }]
+    });
+    </script>
+</body>
+</html>
