@@ -79,7 +79,7 @@ def SIGINTHandler(signum, frame):
 def exitHandler():
 	waterpump.write(0)
 	EnableStepper.write(0)
-	sensor.terminate()
+	#sensor.terminate()
 	restart.terminate()
 	Mx.terminate()
 	My.terminate()
@@ -106,7 +106,7 @@ def Restart_Program():
 		EnableStepper.write(1)
 		waterpump.write(0)
 		EnableStepper.write(0)
-		sensor.terminate()
+		#sensor.terminate()
 		restart.terminate()
 		Mx.terminate()
 		My.terminate()
@@ -150,19 +150,22 @@ def MoveToPot(pot):
 	time.sleep(1)
 	return 
 	
-def PlantMoist():
-	print "Check Soil Moisture "
-	if (Distancevalue > 0.5): 
+def PlantMoist(pot):
+	print "Check Soil Moisture Pot %d "(% pot)
+	if (Distancevalue < 0.9): 
+		print "Pot detected !"
 		gServo.setAngle(100) 
-		time.sleep(1)
+		time.sleep(1.5)
 		
-		if (Soilvalue > 300): 
+		if (Soilvalue < 300):
+			print "Soil value is %d , Need Watering"(%Soilvalue) 
 			waterpump.write(1)
 			time.sleep(1.3)
 			waterpump.write(0)
 			time.sleep(1)
-		else: print "Soil is Moisture"
-	else: print "No Pot detected"		
+			print "Done watering on pot %d"(%pot)
+		else: print "Soil in pot %d is already Moisture"(%pot)
+	else: print "Pot %d detected"(%pot)		
 	gServo.setAngle(50)
 	time.sleep(1)
 	return 
@@ -185,16 +188,16 @@ if __name__ == '__main__':
 	while (flag):
 		restart.start()
 		# Add calling camera modules
-		sensor.start()
+		#sensor.start()
 		initial()
 		for x in range(1,10):
 			MoveToPot(x)
-			PlantMoist()
+			PlantMoist(x)
 
 		flag = 0
 
 	del [light, temp, button, gServo]  
-	sensor.terminate()
+	#sensor.terminate()
 	restart.terminate()
 	Mx.terminate()
 	My.terminate()
