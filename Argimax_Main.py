@@ -28,7 +28,6 @@ import pyupm_guvas12d as upmUV
 import pyupm_grovemoisture as upmMoisture
 import pyupm_stepmotor as mylib
 import pyupm_servo as servo
-from threading import Thread
 from multiprocessing import Process
 
 # IO Def
@@ -48,9 +47,12 @@ switchY = mraa.Gpio(7)    					#SwitchY for GPIO 7
 switchY.dir(mraa.DIR_IN)
 switchX = mraa.Gpio(8)						#SwitchX for GPIO 8
 switchX.dir(mraa.DIR_IN)
-EnableStepper = mraa.Gpio(9)				#StepperMotor Enable on GPIO 9
-EnableStepper.dir(mraa.DIR_OUT)
-EnableStepper.write(0)
+EnableStepperX = mraa.Gpio(9)				#StepperMotorX Enable on GPIO 9
+EnableStepperX.dir(mraa.DIR_OUT)
+EnableStepperX.write(1)
+EnableStepperY = mraa.Gpio(11)				#StepperMotorY Enable on GPIO 11
+EnableStepperY.dir(mraa.DIR_OUT)
+EnableStepperY.write(1)
 button = grove.GroveButton(0)  				#Digital Button on D0   -> ## button.value()
 
 		
@@ -77,12 +79,15 @@ def SIGINTHandler(signum, frame):
 
 # This function lets you run code on exit, including functions from myUVSensor
 def exitHandler():
+	cleanup_stop_thread()
+	gc.collect()
 	waterpump.write(0)
-	EnableStepper.write(0)
+	EnableStepperX.write(1)
+	EnableStepperY.write(1)
 	#sensor.terminate()
-	restart.terminate()
-	Mx.terminate()
-	My.terminate()
+	#restart.terminate()
+	#Mx.terminate()
+	#My.terminate()
 	print "Exiting"
 	sys.exit(0)
 
@@ -103,13 +108,15 @@ def init_MotorY():
 	
 def Restart_Program():
 	while (button.value() == 1):
-		EnableStepper.write(1)
+		cleanup_stop_thread()
+        	gc.collect()
 		waterpump.write(0)
-		EnableStepper.write(0)
+		EnableStepperX.write(1)
+		EnableStepperY.write(1)
 		#sensor.terminate()
-		restart.terminate()
-		Mx.terminate()
-		My.terminate()
+		#restart.terminate()
+		#Mx.terminate()
+		#My.terminate()
 		os.execv(sys.executable, sys.executable + sys.argv) #os.execv(sys.executable, ['python'] + sys.argv)
 	return
 	
@@ -119,13 +126,15 @@ def initial():
 	# Test Stepper Motor (going to initial stages)
 	Mx = Process(target = init_MotorX)
 	My = Process(target = init_MotorY)
-	EnableStepper.write(0)
+	EnableStepperX.write(0)
+	EnableStepperY.write(0)
 	Mx.start()
 	My.start()
 	while (switchX.read() | switchY.read()):
 		if (switchX.read()==0): Mx.terminate()
 		if (switchY.read()==0): My.terminate()
-	EnableStepper.write(1)
+	EnableStepperX.write(1)
+	EnableStepperY.write(1)
 	# Turn OFF water pump relay
 	waterpump.write(0)
 	# Servo z-axis should be up
@@ -135,7 +144,8 @@ def initial():
 def MoveToPot(pot):
 	print "Moving to Pot %d " %(pot)
 	posX = 200; posY = 200
-	EnableStepper.write(0)
+	EnableStepperX.write(0)
+	EnableStepperY.write(0)
 	if (pot == 1): stepperX.stepBackward(posX); stepperY.stepForward(posY); 
 	elif (pot == 2): stepperX.stepBackward(posX+100); stepperY.stepForward(posY+100); 
 	elif (pot == 3): stepperX.stepBackward(posX+200); stepperY.stepForward(posY+200); 
@@ -146,26 +156,27 @@ def MoveToPot(pot):
 	elif (pot == 8): stepperX.stepBackward(posX+700); stepperY.stepForward(posY+700); 
 	elif (pot == 9): stepperX.stepBackward(posX+800); stepperY.stepForward(posY+800); 
 	else: print "Invalid operation for Pot Position"; 
-	EnableStepper.write(1)
+	EnableStepperX.write(1)
+	EnableStepperY.write(1)
 	time.sleep(1)
 	return 
 	
 def PlantMoist(pot):
-	print "Check Soil Moisture Pot %d "(% pot)
+	print "Check Soil Moisture Pot %d "%(pot)
 	if (Distancevalue < 0.9): 
 		print "Pot detected !"
 		gServo.setAngle(100) 
 		time.sleep(1.5)
 		
 		if (Soilvalue < 300):
-			print "Soil value is %d , Need Watering"(%Soilvalue) 
+			print "Soil value is %d , Need Watering"%(Soilvalue) 
 			waterpump.write(1)
 			time.sleep(1.3)
 			waterpump.write(0)
 			time.sleep(1)
-			print "Done watering on pot %d"(%pot)
-		else: print "Soil in pot %d is already Moisture"(%pot)
-	else: print "Pot %d detected"(%pot)		
+			print "Done watering on pot %d"%(pot)
+		else: print "Soil in pot %d is already Moisture"%(pot)
+	else: print "Pot %d detected"%(pot)		
 	gServo.setAngle(50)
 	time.sleep(1)
 	return 
@@ -196,11 +207,13 @@ if __name__ == '__main__':
 
 		flag = 0
 
-	del [light, temp, button, gServo]  
+	del [light, temp, button, gServo] 
+	cleanup_stop_thread()
+        gc.collect() 
 	#sensor.terminate()
-	restart.terminate()
-	Mx.terminate()
-	My.terminate()
+	#restart.terminate()
+	#Mx.terminate()
+	#My.terminate()
 
 # Information:
 ## Soil moisture Values (approximate):

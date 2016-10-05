@@ -56,7 +56,8 @@ https://pypi.python.org/pypi/websocket-client/
  
 	Touch switch X (GPIO 7)
 	Touch switch Y (GPIO 8)
-	StepperMotor Enable (GPIO 9) [not suing it]
+	StepperMotor EnableX (GPIO 9) 
+	StepperMotor EnableY (GPIO 11)
 	Restart button   (GPIO  1)  -> to restart the software and motor position
 	
 	Emergency Button (to cut off 12v Power)
