@@ -128,12 +128,22 @@ def initial():
 	My = Process(target = init_MotorY)
 	EnableStepperX.write(0)
 	EnableStepperY.write(0)
+	'''
 	Mx.start()
 	My.start()
 	while (switchX.read() | switchY.read()):
 		if (switchX.read()==0): Mx.terminate()
 		if (switchY.read()==0): My.terminate()
 	EnableStepperX.write(1)
+	EnableStepperY.write(1)
+	'''
+	Mx.start()
+	while (switchX.read()):
+		if (switchX.read()==0): Mx.terminate()
+	EnableStepperX.write(1)
+	My.start()
+	while (switchY.read()):	
+		if (switchY.read()==0): My.terminate()
 	EnableStepperY.write(1)
 	# Turn OFF water pump relay
 	waterpump.write(0)
