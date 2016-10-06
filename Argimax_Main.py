@@ -71,8 +71,8 @@ Tempvalue = temp.value()  						# Celsius
 # Defined Motors
 stepperX.setSpeed(150)
 stepperY.setSpeed(150)
-Mx = Process(target = init_MotorX)
-My = Process(target = init_MotorY)
+#Mx = Process(target = init_MotorX)
+#My = Process(target = init_MotorY)
 
 ## Exit handlers ##
 # This function stops python from printing a stacktrace when you hit control-C
@@ -204,6 +204,8 @@ def cleanup_stop_thread():
 # Global Definition
 restart = Process(target = Restart_Program) #Go into Initial Stages
 sensor = Process(target = GetSensorsValue) #Go into Sensors Display
+Mx = Process(target = init_MotorX)
+My = Process(target = init_MotorY)
 
 if __name__ == '__main__':
 	while (flag):
