@@ -109,13 +109,12 @@ def Restart_Program():
 	
 def initial():
 	print "Reset to initial stages ..... "
-	# Test input value for switch(s) and restart button
+'''	# Test input value for switch(s) and restart button
 	# Test Stepper Motor (going to initial stages)
 	#Mx = Process(target = init_MotorX)
 	#My = Process(target = init_MotorY)
 	EnableStepperX.write(0)
 	EnableStepperY.write(0)
-	'''
 	Mx.start()
 	My.start()
 	while (switchX.read() | switchY.read()):
@@ -123,7 +122,7 @@ def initial():
 		if (switchY.read()==0): My.terminate()
 	EnableStepperX.write(1)
 	EnableStepperY.write(1)
-	'''
+
 	Mx.start()
 	while (switchX.read()):
 		if (switchX.read()==0): Mx.terminate(); EnableStepperX.write(1)
@@ -133,6 +132,16 @@ def initial():
 	while (switchY.read()):	
 		if (switchY.read()==0): My.terminate(); EnableStepperY.write(1)
 	print "Finish Motor Y"
+	EnableStepperY.write(1)'''
+	EnableStepperX.write(0)
+	EnableStepperY.write(0)
+	while(switchX.read()):
+	    stepperX.stepForward(80)
+	    time.sleep(0.3)
+	while(switchY.read()):
+	    stepperY.stepBackward(80)
+	    time.sleep(0.3)
+	EnableStepperX.write(1)
 	EnableStepperY.write(1)
 	# Turn OFF water pump relay
 	waterpump.write(0)
@@ -145,15 +154,15 @@ def MoveToPot(pot):
 	posX = 200; posY = 200
 	EnableStepperX.write(0)
 	EnableStepperY.write(0)
-	if (pot == 1): stepperX.stepBackward(posX); stepperY.stepForward(posY); 
-	elif (pot == 2): stepperX.stepBackward(posX+100); stepperY.stepForward(posY+100); 
-	elif (pot == 3): stepperX.stepBackward(posX+200); stepperY.stepForward(posY+200); 
-	elif (pot == 4): stepperX.stepBackward(posX+300); stepperY.stepForward(posY+300); 
-	elif (pot == 5): stepperX.stepBackward(posX+400); stepperY.stepForward(posY+400); 
-	elif (pot == 6): stepperX.stepBackward(posX+500); stepperY.stepForward(posY+500); 
-	elif (pot == 7): stepperX.stepBackward(posX+600); stepperY.stepForward(posY+600); 
-	elif (pot == 8): stepperX.stepBackward(posX+700); stepperY.stepForward(posY+700); 
-	elif (pot == 9): stepperX.stepBackward(posX+800); stepperY.stepForward(posY+800); 
+	if (pot == 1): stepperY.stepForward(350); stepperX.stepBackward(267) 
+	elif (pot == 2): stepperX.stepBackward(534)
+	elif (pot == 3): stepperX.stepBackward(534)
+	elif (pot == 4): stepperY.stepForward(700)
+	elif (pot == 5): stepperX.stepForward(534)
+	elif (pot == 6): stepperX.stepForward(534)
+	elif (pot == 7): stepperY.stepForward(700)
+	elif (pot == 8): stepperX.stepBackward(534)
+	elif (pot == 9): stepperX.stepBackward(534)
 	else: print "Invalid operation for Pot Position"; 
 	EnableStepperX.write(1)
 	EnableStepperY.write(1)
@@ -210,15 +219,21 @@ Mx = Process(target = init_MotorX)
 My = Process(target = init_MotorY)
 
 if __name__ == '__main__':
+	restart.start()
 	while (flag):
-		restart.start()
+		
 		# Add calling camera modules
 		#sensor.start()
 		initial()
 		for x in range(1,10):
 			MoveToPot(x)
 			PlantMoist(x)
-
+		EnableStepperX.write(0)
+		EnableStepperY.write(0)
+		stepperX.stepForward(1335)
+		stepperY.stepBackward(1750)
+		EnableStepperX.write(1)
+		EnableStepperY.write(1)
 		flag = 0
 
 	cleanup_stop_thread()
