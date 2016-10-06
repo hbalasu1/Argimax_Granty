@@ -126,11 +126,13 @@ def initial():
 	'''
 	Mx.start()
 	while (switchX.read()):
-		if (switchX.read()==0): Mx.terminate()
-	EnableStepperX.write(1)
+		if (switchX.read()==0): Mx.terminate(); EnableStepperX.write(1)
+	print "Finish Motor X"
+	#EnableStepperX.write(1)
 	My.start()
 	while (switchY.read()):	
-		if (switchY.read()==0): My.terminate()
+		if (switchY.read()==0): My.terminate(); EnableStepperY.write(1)
+	print "Finish Motor Y"
 	EnableStepperY.write(1)
 	# Turn OFF water pump relay
 	waterpump.write(0)
