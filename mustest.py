@@ -33,10 +33,68 @@ EnableStepperY.dir(mraa.DIR_OUT)
 EnableStepperY.write(1)
 button = grove.GroveButton(0)  			#Digital Button on D0   
 
+plant_number = 8
+plant_positionX = [267,801,1335]
+plant_positionY = [350,1050,1750]
+
 stepperX.setSpeed(150)
 stepperY.setSpeed(150)
+EnableStepperX.write(0)
+EnableStepperY.write(0)
+'''while(switchX.read()):
+    stepperX.stepForward(80)
+    time.sleep(0.3)
+while(switchY.read()):
+    stepperY.stepBackward(80)
+    time.sleep(0.3)
+stepperX.stepBackward(1602)
+time.sleep(1)
+stepperX.stepForward(1602)
+stepperY.stepForward(2100)
+time.sleep(1)
+stepperY.stepBackward(2100)
+'''
+#go to 1st position
+stepperY.stepForward(350)
+stepperX.stepBackward(267)
+time.sleep(1)
 
-while(switchX.read()):
-	stepperX.stepForward(200)
-	time.sleep(0.3)
-	return
+#go to 2nd position
+stepperX.stepBackward(534)
+time.sleep(1)
+
+#go to 3rd position
+stepperX.stepBackward(534)
+time.sleep(1)
+
+#go to 4th position
+stepperY.stepForward(700)
+time.sleep(1)
+
+#go to 5th position
+stepperX.stepForward(534)
+time.sleep(1)
+
+#go to 6th position
+stepperX.stepForward(534)
+time.sleep(1)
+
+#go to 7th position
+stepperY.stepForward(700)
+time.sleep(1)
+
+#go to 8th position
+stepperX.stepBackward(534)
+time.sleep(1)
+
+#go to 9th position
+stepperX.stepBackward(534)
+time.sleep(1)
+
+#return to original position (0,0)
+stepperX.stepForward(1335)
+stepperY.stepBackward(1750)
+
+EnableStepperX.write(1)
+EnableStepperY.write(1)
+
