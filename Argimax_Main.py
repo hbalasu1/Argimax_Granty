@@ -31,29 +31,29 @@ import pyupm_servo as servo
 from multiprocessing import Process
 
 # IO Def
-myIRProximity = mraa.Aio(5)  				#GP2Y0A on Analog pin 5
-temp = grove.GroveTemp(0) 					#grove temperature on A0 
+myIRProximity = mraa.Aio(5)  			#GP2Y0A on Analog pin 5
+temp = grove.GroveTemp(0) 			#grove temperature on A0 
 myMoisture = upmMoisture.GroveMoisture(1) 	#Moisture sensor on A1
-light = grove.GroveLight(2) 				#Light sensor on A2
-myUVSensor = upmUV.GUVAS12D(3) 				#UV sensor on A3
-stepperX = mylib.StepMotor(2, 3) 			#StepMotorY object on pins 2 (dir) and 3 (step)
-stepperY = mylib.StepMotor(4, 5)			#StepMotorX object on pins 4 (dir) and 5 (step)
-waterpump = mraa.Gpio(10) 					#Water pump's Relay on GPIO 10
+light = grove.GroveLight(2) 			#Light sensor on A2
+myUVSensor = upmUV.GUVAS12D(3) 			#UV sensor on A3
+stepperX = mylib.StepMotor(2, 3) 		#StepMotorY object on pins 2 (dir) and 3 (step)
+stepperY = mylib.StepMotor(4, 5)		#StepMotorX object on pins 4 (dir) and 5 (step)
+waterpump = mraa.Gpio(10) 			#Water pump's Relay on GPIO 10
 waterpump.dir(mraa.DIR_OUT)
 waterpump.write(0)
 gServo = servo.ES08A(6)                		#Servo object using D6
 gServo.setAngle(50)
-switchY = mraa.Gpio(7)    					#SwitchY for GPIO 7
+switchY = mraa.Gpio(7)    			#SwitchY for GPIO 7
 switchY.dir(mraa.DIR_IN)
-switchX = mraa.Gpio(8)						#SwitchX for GPIO 8
+switchX = mraa.Gpio(8)				#SwitchX for GPIO 8
 switchX.dir(mraa.DIR_IN)
-EnableStepperX = mraa.Gpio(9)				#StepperMotorX Enable on GPIO 9
+EnableStepperX = mraa.Gpio(9)			#StepperMotorX Enable on GPIO 9
 EnableStepperX.dir(mraa.DIR_OUT)
 EnableStepperX.write(1)
-EnableStepperY = mraa.Gpio(11)				#StepperMotorY Enable on GPIO 11
+EnableStepperY = mraa.Gpio(11)			#StepperMotorY Enable on GPIO 11
 EnableStepperY.dir(mraa.DIR_OUT)
 EnableStepperY.write(1)
-button = grove.GroveButton(0)  				#Digital Button on D0   -> ## button.value()
+button = grove.GroveButton(0)  			#Digital Button on D0   
 
 		
 # Variable Def
@@ -62,15 +62,17 @@ SAMPLES_PER_QUERY = 1024
 flag = 1
 
 # Defined all 5 Sensors
-UVvalue = myUVSensor.value(AREF, SAMPLES_PER_QUERY) 				#Voltage value (higher means more UV)
-Lightvalue = light.value()  										# in lux
-Distancevalue = float(myIRProximity.read())*AREF/SAMPLES_PER_QUERY  #Distance in Voltage (higher mean closer)
-Soilvalue = myMoisture.value() 										# 0-300 Dry, 300-600 Most, <600 Wet
-Tempvalue = temp.value()  											# Celsius
+UVvalue = myUVSensor.value(AREF, SAMPLES_PER_QUERY) 			#Voltage value (higher means more UV)
+Lightvalue = light.value()  						# in lux
+Distancevalue = float(myIRProximity.read())*AREF/SAMPLES_PER_QUERY  	#Distance in Voltage (higher mean closer)
+Soilvalue = myMoisture.value() 						# 0-300 Dry, 300-600 Most, <600 Wet
+Tempvalue = temp.value()  						# Celsius
 
 # Defined Motors
 stepperX.setSpeed(150)
 stepperY.setSpeed(150)
+Mx = Process(target = init_MotorX)
+My = Process(target = init_MotorY)
 
 ## Exit handlers ##
 # This function stops python from printing a stacktrace when you hit control-C
@@ -80,14 +82,6 @@ def SIGINTHandler(signum, frame):
 # This function lets you run code on exit, including functions from myUVSensor
 def exitHandler():
 	cleanup_stop_thread()
-	gc.collect()
-	waterpump.write(0)
-	EnableStepperX.write(1)
-	EnableStepperY.write(1)
-	#sensor.terminate()
-	#restart.terminate()
-	#Mx.terminate()
-	#My.terminate()
 	print "Exiting"
 	sys.exit(0)
 
@@ -109,23 +103,16 @@ def init_MotorY():
 def Restart_Program():
 	while (button.value() == 1):
 		cleanup_stop_thread()
-        	gc.collect()
-		waterpump.write(0)
-		EnableStepperX.write(1)
-		EnableStepperY.write(1)
-		#sensor.terminate()
-		#restart.terminate()
-		#Mx.terminate()
-		#My.terminate()
-		os.execv(sys.executable, sys.executable + sys.argv) #os.execv(sys.executable, ['python'] + sys.argv)
+		os.execv(sys.executable, sys.executable + sys.argv)
+		#os.execv(sys.executable, ['python'] + sys.argv)
 	return
 	
 def initial():
 	print "Reset to initial stages ..... "
 	# Test input value for switch(s) and restart button
 	# Test Stepper Motor (going to initial stages)
-	Mx = Process(target = init_MotorX)
-	My = Process(target = init_MotorY)
+	#Mx = Process(target = init_MotorX)
+	#My = Process(target = init_MotorY)
 	EnableStepperX.write(0)
 	EnableStepperY.write(0)
 	'''
@@ -173,6 +160,7 @@ def MoveToPot(pot):
 	
 def PlantMoist(pot):
 	print "Check Soil Moisture Pot %d "%(pot)
+	print "Distance Now is at %f "%(Distancevalue)
 	if (Distancevalue < 0.9): 
 		print "Pot detected !"
 		gServo.setAngle(100) 
@@ -201,9 +189,21 @@ def GetSensorsValue():
 		print "5. Temperature Sensor :  %d Celsius" % Tempvalue
 	return 
 
+def cleanup_stop_thread():
+	gc.collect()
+        #sensor.terminate()
+        restart.terminate()
+        Mx.terminate()
+        My.terminate()
+	waterpump.write(0)
+        EnableStepperX.write(1)
+        EnableStepperY.write(1)
+	del [light, temp, button, gServo]
+
+
 # Global Definition
 restart = Process(target = Restart_Program) #Go into Initial Stages
-sensor = Process(target = GetSensorsValue) #Go into Initial Stages
+sensor = Process(target = GetSensorsValue) #Go into Sensors Display
 
 if __name__ == '__main__':
 	while (flag):
@@ -217,13 +217,8 @@ if __name__ == '__main__':
 
 		flag = 0
 
-	del [light, temp, button, gServo] 
 	cleanup_stop_thread()
-        gc.collect() 
-	#sensor.terminate()
-	#restart.terminate()
-	#Mx.terminate()
-	#My.terminate()
+
 
 # Information:
 ## Soil moisture Values (approximate):
