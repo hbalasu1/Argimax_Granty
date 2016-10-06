@@ -57,43 +57,44 @@ stepperY.stepBackward(2100)
 #go to 1st position
 stepperY.stepForward(350)
 stepperX.stepBackward(267)
-time.sleep(1)
+time.sleep(3)
 
 #go to 2nd position
 stepperX.stepBackward(534)
-time.sleep(1)
+time.sleep(3)
 
 #go to 3rd position
 stepperX.stepBackward(534)
-time.sleep(1)
+time.sleep(3)
 
 #go to 4th position
 stepperY.stepForward(700)
-time.sleep(1)
+time.sleep(3)
 
 #go to 5th position
 stepperX.stepForward(534)
-time.sleep(1)
+time.sleep(3)
 
 #go to 6th position
 stepperX.stepForward(534)
-time.sleep(1)
+time.sleep(3)
 
 #go to 7th position
 stepperY.stepForward(700)
-time.sleep(1)
+time.sleep(3)
 
 #go to 8th position
 stepperX.stepBackward(534)
-time.sleep(1)
+time.sleep(3)
 
 #go to 9th position
 stepperX.stepBackward(534)
-time.sleep(1)
+time.sleep(3)
 
 #return to original position (0,0)
 stepperX.stepForward(1335)
 stepperY.stepBackward(1750)
+time.sleep(3)
 
 EnableStepperX.write(1)
 EnableStepperY.write(1)

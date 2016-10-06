@@ -22,7 +22,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import time, sys, signal, atexit, mraa, thread, threading, os
+import time, sys, signal, atexit, mraa, thread, threading, os, gc
 import pyupm_grove as grove
 import pyupm_guvas12d as upmUV
 import pyupm_grovemoisture as upmMoisture
@@ -64,8 +64,8 @@ flag = 1
 # Defined all 5 Sensors
 UVvalue = myUVSensor.value(AREF, SAMPLES_PER_QUERY) 			#Voltage value (higher means more UV)
 Lightvalue = light.value()  						# in lux
-Distancevalue = float(myIRProximity.read())*AREF/SAMPLES_PER_QUERY  	#Distance in Voltage (higher mean closer)
-Soilvalue = myMoisture.value() 						# 0-300 Dry, 300-600 Most, <600 Wet
+#Distancevalue = float(myIRProximity.read())*AREF/SAMPLES_PER_QUERY  	#Distance in Voltage (higher mean closer)
+#Soilvalue = myMoisture.value() 						# 0-300 Dry, 300-600 Most, <600 Wet
 Tempvalue = temp.value()  						# Celsius
 
 # Defined Motors
@@ -109,7 +109,8 @@ def Restart_Program():
 	
 def initial():
 	print "Reset to initial stages ..... "
-'''	# Test input value for switch(s) and restart button
+        '''
+	# Test input value for switch(s) and restart button
 	# Test Stepper Motor (going to initial stages)
 	#Mx = Process(target = init_MotorX)
 	#My = Process(target = init_MotorY)
@@ -132,7 +133,8 @@ def initial():
 	while (switchY.read()):	
 		if (switchY.read()==0): My.terminate(); EnableStepperY.write(1)
 	print "Finish Motor Y"
-	EnableStepperY.write(1)'''
+	EnableStepperY.write(1)
+        '''
 	EnableStepperX.write(0)
 	EnableStepperY.write(0)
 	while(switchX.read()):
@@ -170,19 +172,23 @@ def MoveToPot(pot):
 	return 
 	
 def PlantMoist(pot):
+        Distancevalue = float(myIRProximity.read())*AREF/SAMPLES_PER_QUERY 
 	print "Check Soil Moisture Pot %d "%(pot)
 	print "Distance Now is at %f "%(Distancevalue)
 	if (Distancevalue < 0.9): 
-		print "Pot detected !"
+#		print "Pot detected !"
 		gServo.setAngle(100) 
 		time.sleep(1.5)
-		
-		if (Soilvalue < 300):
-			print "Soil value is %d , Need Watering"%(Soilvalue) 
+	        Soilvalue = myMoisture.value()
+                if (Soilvalue == 0):
+                    print("Pot"+str(pot)+" not detected ! \n skip")
+                elif (Soilvalue < 300):
+                        print "Pot detected !"
+                        print "Soil value is %d , Need Watering"%(Soilvalue) 
 			waterpump.write(1)
-			time.sleep(1.3)
-			waterpump.write(0)
 			time.sleep(1)
+			waterpump.write(0)
+			time.sleep(1.2)
 			print "Done watering on pot %d"%(pot)
 		else: print "Soil in pot %d is already Moisture"%(pot)
 	else: print "Pot %d detected"%(pot)		
@@ -198,18 +204,24 @@ def GetSensorsValue():
 		print "3. Distance Sensor : 	%f V" % Distancevalue
 		print "4. Moisture Sensor : 	%d " % Soilvalue
 		print "5. Temperature Sensor :  %d Celsius" % Tempvalue
-	return 
+	return
+
+def Plotting_Cam():
+    Local = os.getcwd()
+    print "node "+os.getcwd()+"web_plot_cam/web/server/server.js"
+    os.system("node "+os.getcwd()+"web_plot_cam/web/server/server.js")
 
 def cleanup_stop_thread():
 	gc.collect()
-        #sensor.terminate()
+        graph.terminate()
         restart.terminate()
-        Mx.terminate()
-        My.terminate()
+#       Mx.terminate()
+#       My.terminate()
 	waterpump.write(0)
         EnableStepperX.write(1)
         EnableStepperY.write(1)
-	del [light, temp, button, gServo]
+        os.system("killall node")
+#	del [light, temp, button, gServo]
 
 
 # Global Definition
@@ -217,13 +229,12 @@ restart = Process(target = Restart_Program) #Go into Initial Stages
 sensor = Process(target = GetSensorsValue) #Go into Sensors Display
 Mx = Process(target = init_MotorX)
 My = Process(target = init_MotorY)
+graph = Process(target = Plotting_Cam)
 
 if __name__ == '__main__':
 	restart.start()
 	while (flag):
-		
-		# Add calling camera modules
-		#sensor.start()
+		graph.start()
 		initial()
 		for x in range(1,10):
 			MoveToPot(x)
