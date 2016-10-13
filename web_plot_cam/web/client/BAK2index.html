@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="initial-scale=1"/>
+  <title>Agribotix Gantry</title>
+  <script src="js/socket.io.js"></script>
+  <script src="js/jquery-1.7.1.min.js"></script>
+  <script src="js/highcharts.js"></script>
+  <style type="text/css">
+    .container {
+      margin-top: 1%;
+      text-align: center;
+    }
+
+    #canvas-video {
+      width: 640px;
+      height: 480px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <!-- Reference: https://github.com/phoboslab/jsmpeg/blob/master/stream-example.html -->
+
+  <div class="container">
+  <h1><font color="green">Agribotix Gantry</font></h1>
+  <div id="chart" style="width:100%; height:400px;"></div>
+    <!--
+      The canvas size specified here is the "initial" internal resolution. jsmpeg will
+      change this internal resolution to whatever the source provides. The size the
+      canvas is displayed on the website is dictated by the CSS style.
+    -->
+    <canvas id="canvas-video" width="640" height="480"></canvas>
+  </div>
+	 <!-- Script for Loading WebCam -->
+  <script src="jsmpg.js"></script>
+  <script type="text/javascript">
+    // Show loading notice
+    var canvas = document.getElementById('canvas-video');
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#333';
+    ctx.fillText('Loading...', canvas.width/2-30, canvas.height/3);
+
+    // Start the player
+    var client = new WebSocket('ws://' + document.domain + ':8084');
+    var player = new jsmpeg(client, { canvas:canvas });
+  </script>
+  
+    <!-- Script for Plotting the Graphs -->
+  <script type="text/javascript">
+    var socket = io.connect('ws://' + document.domain + ':3000');
+    //var socket = io.connect()	
+    var chart;
+    chart = new Highcharts.Chart({ 
+        chart: {
+            renderTo: 'chart', 
+            defaultSeriesType: 'spline',
+            events: {
+                load: function() {
+                    // Each time you receive a value from the socket, I put it on the graph
+                    socket.on('temperatureUpdate', function (time, data) {
+                        var series = chart.series[0];
+                        series.addPoint([time, data]);
+                    });
+                }
+            }
+        },
+        rangeSelector : {
+            selected : 100
+        },
+        title: {
+            text: 'Sensors Value'
+        },
+        xAxis: {
+            type: 'datetime',
+            tickPixelInterval: 150,
+            maxZoom: 20 * 1000
+        },
+        yAxis: {
+            minPadding: 0.2,
+            maxPadding: 0.2,
+            title: {
+                text: 'Celcius',
+                margin: 80
+            }
+        },
+        series: [{
+            name: 'Temperature',
+            data: []  // Change here
+        }]
+    });
+    </script>
+  
+</body>
+</html>
