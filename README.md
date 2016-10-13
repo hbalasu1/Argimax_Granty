@@ -39,6 +39,8 @@ http://websockets.readthedocs.io/en/stable/intro.html
 Another example based on web-ssocket-client (without any .html)
 https://pypi.python.org/pypi/websocket-client/
 
+# Webcam
+EasyRTC : https://easyrtc.com/
 
 #Pin Connection to Intel Edison :
 	Proximity Sensor (Analog 5)
